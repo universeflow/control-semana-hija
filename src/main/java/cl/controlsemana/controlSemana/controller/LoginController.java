@@ -18,7 +18,6 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @RequestMapping("/auth")
-@CrossOrigin(origins = {"http://localhost:3000", "semana-con-mi-hija.vercel.app"})
 public class LoginController {
 
     @Autowired
