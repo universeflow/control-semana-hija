@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000", "semana-con-mi-hija.vercel.app"})
 public class ControlSemanaController {
 
     @Autowired
