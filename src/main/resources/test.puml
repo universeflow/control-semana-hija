@@ -1,0 +1,26 @@
+@startuml
+actor User
+
+participant "ControlSemanaController" as Controller
+participant "FechaService" as FechaService
+participant "FechaServiceImpl" as FechaServiceImpl
+participant "LoginService" as LoginService
+participant "JwtUtil" as JwtUtil
+
+== Login Endpoint ==
+User -> Controller: POST /auth/login (RequestLogin)
+Controller -> LoginService: login(requestLogin)
+LoginService -> JwtUtil: generateToken(email)
+JwtUtil --> LoginService: token
+LoginService --> Controller: UsuarioResponseDto (token or error)
+Controller --> User: Response (token or error)
+
+== Fecha Endpoint ==
+User -> Controller: GET /fecha/{fecha} (with JWT)
+Controller -> FechaService: validarFecha(fecha)
+FechaService -> FechaServiceImpl: validarFecha(fechaRequest)
+FechaServiceImpl -> FechaServiceImpl: obtenerSemanaParental(inicio, fin, fechas)
+FechaServiceImpl --> FechaService: FechaDto
+FechaService --> Controller: FechaDto
+Controller --> User: Response (FechaDto)
+@enduml
