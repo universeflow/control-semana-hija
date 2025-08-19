@@ -18,6 +18,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor(force = true)
 @RequestMapping("/auth")
+@CrossOrigin(origins = "*", allowedHeaders = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class LoginController {
 
     @Autowired
@@ -36,8 +37,12 @@ public class LoginController {
         assert service != null;
         UsuarioResponseDto response = service.login(requestLogin);
         return ResponseEntity.ok(response);
+    }
 
-        }
+    @RequestMapping(value = "/login", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> handleOptions() {
+        return ResponseEntity.ok().build();
+    }
 
 
 }
