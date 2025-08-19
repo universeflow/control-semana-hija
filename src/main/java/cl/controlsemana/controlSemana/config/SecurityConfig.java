@@ -34,10 +34,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf().disable()
-                .authorizeRequests() // Cambiado de authorizeHttpRequests a authorizeRequests
+                .authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permitir todas las peticiones OPTIONS
                 .antMatchers("/auth/login").permitAll() // Permitir acceso sin token al endpoint de login
                 .anyRequest().authenticated() // Requerir autenticación para otros endpoints
                 .and()
@@ -57,12 +57,16 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000",frontendUrl)); // Usar la propiedad parametrizada
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowedOriginPatterns(List.of("*")); // Permitir todos los orígenes por ahora
+        configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:3001", frontendUrl)); 
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
+        configuration.setAllowedHeaders(List.of("*")); // Permitir todos los headers
+        configuration.setExposedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
-        return new UrlBasedCorsConfigurationSource() {{
-            registerCorsConfiguration("/**", configuration);
-        }};
+        configuration.setMaxAge(3600L); // Cache preflight por 1 hora
+        
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
